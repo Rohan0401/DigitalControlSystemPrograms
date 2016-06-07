@@ -1,0 +1,298 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>emulation</title><meta name="generator" content="MATLAB 8.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-11-16"><meta name="DC.source" content="emulation.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput">clc;clear;close <span class="string">all</span>;
+
+phaseValue=[];
+fprintf(<span class="string">'continuous time transfer fn H(s):'</span>)
+sysContinuous=zpk(-1,-10,10)
+[~,phase]=bode(sysContinuous,3);
+fprintf(<span class="string">'phase at w1=3 rad/sec:\n'</span>)
+disp(phase)
+phaseValue=[phaseValue phase];
+
+figure(1)
+hold <span class="string">on</span>
+bode(sysContinuous)
+fprintf(<span class="string">'discrete transfer function using forward rectangular rule:'</span>)
+sysD_FRR=zpk([0.75],[-1.5],10,0.25)
+bode(sysD_FRR)
+
+legend(<span class="string">'H(s)'</span>,<span class="string">'H(z)using FRR'</span>)
+[~,phase]=bode(sysD_FRR,3);
+fprintf(<span class="string">'\n Phase at w1=3 radians/second:\n'</span>)
+disp(phase)
+phaseValue=[phaseValue phase];
+
+fprintf(<span class="string">'Discrete transfer function using backward rectangular rule:'</span>)
+
+sysD_BRR=zpk(0.8,0.28,3.57,0.25)
+bode(sysD_BRR)
+legend(<span class="string">'H(s)'</span>,<span class="string">'H(z) using FRR'</span>,<span class="string">'H(z) using BRR'</span>)
+[~,phase]=bode(sysD_BRR,3);
+fprintf(<span class="string">'\nPhase at w1=3 radians/second:\n'</span>)
+disp(phase)
+phaseValue=[phaseValue phase];
+
+fprintf(<span class="string">'Discrete transfer function using trapezoidal rule:'</span>)
+sysD_Tustin=zpk(0.77,-0.11,5,0.25)
+bode(sysD_Tustin)
+legend(<span class="string">'H(s)'</span>,<span class="string">'H(z) using FRR'</span>,<span class="string">'H(z) using BRR'</span>,<span class="string">'H(z) using Tustin'</span>)
+[~,phase]=bode(sysD_Tustin,3);
+fprintf(<span class="string">'\nPhase at w1=3 radians/second:\n'</span>)
+disp(phase)
+phaseValue=[phaseValue phase];
+
+fprintf(<span class="string">'Discrete transfer function using zero order hold:'</span>)
+sysD_ZOH=c2d(sysContinuous,0.25,<span class="string">'zoh'</span>)
+bode(sysD_Tustin)
+legend(<span class="string">'H(s)'</span>,<span class="string">'H(z)using FRR'</span>,<span class="string">'H(z)using BRR'</span>,<span class="string">'H(z) using TRR'</span>,<span class="string">'H(z)using ZOH equivalent'</span>)
+[mag,phase]=bode(sysD_ZOH,3)
+disp(phase)
+phaseValue=[phaseValue phase];
+grid <span class="string">on</span>
+
+hold <span class="string">off</span>
+
+fprintf(<span class="string">'H(s)  FRR  BRR  TRR\n'</span>)
+
+fprintf(<span class="string">'%5.2f,%5.2f,%5.2f,%5.2f,%5.2f\n'</span>,phaseValue)
+
+figure(2)
+subplot(2,2,1)
+pzmap(sysD_FRR)
+
+title(<span class="string">'Pole zero map of FRR'</span>)
+subplot(2,2,2)
+pzmap(sysD_BRR)
+
+title(<span class="string">'pole zero map of BRR'</span>)
+
+subplot(2,2,3)
+pzmap(sysD_Tustin)
+
+title(<span class="string">'pole zero map of TRR'</span>)
+subplot(2,2,4)
+pzmap(sysD_ZOH)
+title(<span class="string">'zero-order hold equivalent map '</span>)
+</pre><pre class="codeoutput">continuous time transfer fn H(s):
+sysContinuous =
+ 
+  10 (s+1)
+  --------
+   (s+10)
+ 
+Continuous-time zero/pole/gain model.
+
+phase at w1=3 rad/sec:
+   54.8658
+
+discrete transfer function using forward rectangular rule:
+sysD_FRR =
+ 
+  10 (z-0.75)
+  -----------
+    (z+1.5)
+ 
+Sample time: 0.25 seconds
+Discrete-time zero/pole/gain model.
+
+
+ Phase at w1=3 radians/second:
+   74.5542
+
+Discrete transfer function using backward rectangular rule:
+sysD_BRR =
+ 
+  3.57 (z-0.8)
+  ------------
+    (z-0.28)
+ 
+Sample time: 0.25 seconds
+Discrete-time zero/pole/gain model.
+
+
+Phase at w1=3 radians/second:
+   39.2533
+
+Discrete transfer function using trapezoidal rule:
+sysD_Tustin =
+ 
+  5 (z-0.77)
+  ----------
+   (z+0.11)
+ 
+Sample time: 0.25 seconds
+Discrete-time zero/pole/gain model.
+
+
+Phase at w1=3 radians/second:
+   54.2147
+
+Discrete transfer function using zero order hold:
+sysD_ZOH =
+ 
+  10 (z-0.9082)
+  -------------
+   (z-0.08208)
+ 
+Sample time: 0.25 seconds
+Discrete-time zero/pole/gain model.
+
+
+mag =
+
+    7.4779
+
+
+phase =
+
+   58.1401
+
+   58.1401
+
+H(s)  FRR  BRR  TRR
+54.87,74.55,39.25,54.21,58.14
+</pre><img vspace="5" hspace="5" src="emulation_01.png" alt=""> <img vspace="5" hspace="5" src="emulation_02.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+clc;clear;close all;
+
+phaseValue=[];
+fprintf('continuous time transfer fn H(s):')
+sysContinuous=zpk(-1,-10,10)
+[~,phase]=bode(sysContinuous,3);
+fprintf('phase at w1=3 rad/sec:\n')
+disp(phase)
+phaseValue=[phaseValue phase];
+
+figure(1)
+hold on
+bode(sysContinuous)
+fprintf('discrete transfer function using forward rectangular rule:')
+sysD_FRR=zpk([0.75],[-1.5],10,0.25)
+bode(sysD_FRR)
+
+legend('H(s)','H(z)using FRR')
+[~,phase]=bode(sysD_FRR,3);
+fprintf('\n Phase at w1=3 radians/second:\n')
+disp(phase)
+phaseValue=[phaseValue phase];
+
+fprintf('Discrete transfer function using backward rectangular rule:')
+
+sysD_BRR=zpk(0.8,0.28,3.57,0.25)
+bode(sysD_BRR)
+legend('H(s)','H(z) using FRR','H(z) using BRR')
+[~,phase]=bode(sysD_BRR,3);
+fprintf('\nPhase at w1=3 radians/second:\n')
+disp(phase)
+phaseValue=[phaseValue phase];
+
+fprintf('Discrete transfer function using trapezoidal rule:')
+sysD_Tustin=zpk(0.77,-0.11,5,0.25)
+bode(sysD_Tustin)
+legend('H(s)','H(z) using FRR','H(z) using BRR','H(z) using Tustin')
+[~,phase]=bode(sysD_Tustin,3);
+fprintf('\nPhase at w1=3 radians/second:\n')
+disp(phase)
+phaseValue=[phaseValue phase];
+
+fprintf('Discrete transfer function using zero order hold:')
+sysD_ZOH=c2d(sysContinuous,0.25,'zoh')
+bode(sysD_Tustin)
+legend('H(s)','H(z)using FRR','H(z)using BRR','H(z) using TRR','H(z)using ZOH equivalent')
+[mag,phase]=bode(sysD_ZOH,3)
+disp(phase)
+phaseValue=[phaseValue phase];
+grid on
+
+hold off
+
+fprintf('H(s)  FRR  BRR  TRR\n')
+
+fprintf('%5.2f,%5.2f,%5.2f,%5.2f,%5.2f\n',phaseValue)
+
+figure(2)
+subplot(2,2,1)
+pzmap(sysD_FRR)
+
+title('Pole zero map of FRR')
+subplot(2,2,2)
+pzmap(sysD_BRR)
+
+title('pole zero map of BRR')
+
+subplot(2,2,3)
+pzmap(sysD_Tustin)
+
+title('pole zero map of TRR')
+subplot(2,2,4)
+pzmap(sysD_ZOH)
+title('zero-order hold equivalent map ')
+##### SOURCE END #####
+--></body></html>
